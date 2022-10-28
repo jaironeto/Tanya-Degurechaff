@@ -8,7 +8,7 @@ Fiz o bot porque queria práticar um pouco javascript, o que foi um sucesso. Tiv
 
 ![comando reply iniciar](https://github.com/jaironeto/Tanya-Degurechaff/blob/main/Screenshot_1.png)
 
-<h2> comando de configurações</h2>
+<h2> comandos de configurações</h2>
 <p>Assim que o bot entra em uma guilda ele de imediato cadastra todos os usuario no banco de dados para funcionar assim que possivel, e então a cada 1 hora ele vasculha as guilda, em todos os canais possiveis, atrás da ultima mensagem enviada do usuario e qual guilda foi enviada, para quando ele solicitar suporte lhe aparecer primeiro os servidores que é mais ativo, ou pelo menos interagiu por ultimo. Contudo, para guilda entrar na lista ela deve primeiro configurar adequadamente com os comandos de barra listado na imagem a baixo, em essencial se deseja ativar ou não o suporte por privado, já que o restante tem padroes pre-disposto.</p>
 <p>Uma observação importante a se fazer e que qualquer um pode responder as mensagens, mas nem todos podem configurar o servidor, por isso cuidado na hora de escolher o canal. Outra coisa e que os canais de opções, ou até mesmo o padrão (quando não tem opção) e cadastrado a partir de onde o comando foi enviado, sempre atualizado quando o comando for feito.</p>
 <p>As mensagens, imagens e opções são personalizaveis.</p> 
