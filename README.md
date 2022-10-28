@@ -10,4 +10,4 @@ Fiz o bot porque queria práticar um pouco javascript, o que foi um sucesso. Tiv
 ![comando reply iniciar](https://github.com/jaironeto/Tanya-Degurechaff/blob/main/Screenshot_1.png)
 
 <h2> comando de configurações</h2>
-
+![comandos de configurações](https://github.com/jaironeto/Tanya-Degurechaff/blob/main/Screenshot_2.png)
