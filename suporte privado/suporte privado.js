@@ -1,41 +1,58 @@
 const inicial = require('./messageCreate/inicial');
-const opcaoComponentDM = require('./interaction/opcaoComponentDM');
 const VerifyDatabase = require('./private/class/DadosDatabase');
 const reply = require('./messageCreate/reply');
 const private = require('./messageCreate/private');
 const comando = require('./messageCreate/comando');
-const config = require('./interaction/config');
-const { predizerManual, _deletePredizer, predizerGuildAd, _deleteGuild } = require('../public/database/private');
+const { predizerManual, _deletePredizer, _deleteGuild } = require('../public/database/private');
+const connect = require('./interaction/connect');
+const message = require('./interaction/message');
+const image = require('./interaction/image');
+const opcao = require('./interaction/opcao');
+const buttonProximo = require('./interaction/buttonProximo');
+const buttonAnterior = require('./interaction/buttonAnterior');
+const buttonIniciar = require('./interaction/buttonIniciar');
+const buttonFechar = require('./interaction/buttonFechar');
+const buttonOpcao = require('./interaction/buttonOpcao');
 
-// AMBOS ENCERRA SE FOR UM BOT/ESSE BOT
+// AMBOS ENCERRA SE FOR UM BOT/ESSE BOT0
 // NÃO TEM NECESSIDADE E PODE AJUDAR NO DESEMPENHO IGNORAR
 async function interaction(interaction) {
   if (interaction.user.bot) { return }
 
   switch (interaction.channel.type) {
-    // DM
-    case 1: {
-      switch (interaction.type) {
-        case 3: // ButtonInteraction
-          await interaction.deferUpdate()
-          await opcaoComponentDM(interaction, await dadosSQL(interaction));
-          return
-        case 2: // ChatInputCommandInteraction
-          return
-      }
-    } return;
+    case 1: // DM
+      if (interaction.type !== 3) { return } // ButtonInteraction
+      await interaction.deferUpdate()
 
-    // GUILDTEXT
-    case 0: {
-      switch (interaction.type) {
-        case 2:  // ChatInputCommandInteraction
-          await interaction.deferReply();
-          await config(interaction);
-          return;
-        case 3:  // COMANDO DE BARRA
-          return;
+      if (interaction?.customId === 'proximo') {
+        await buttonProximo(interaction, await dadosSQL(interaction));
+      } else if (interaction?.customId === 'anterior') {
+        await buttonAnterior(interaction, await dadosSQL(interaction));
+      } else if (interaction?.customId === 'iniciar') {
+        await buttonIniciar(interaction, await dadosSQL(interaction));
+      } else if (interaction?.customId === 'fechar') {
+        await buttonFechar(interaction);
+      } else {
+        await buttonOpcao(interaction, await dadosSQL(interaction));
       }
-    } return;
+
+      return; case 0: {  // GUILDTEXT
+        if (interaction.type !== 2) { return }   // ChatInputCommandInteraction
+        if (interaction?.options?._hoistedOptions[0]?.name === undefined) { return }
+        if (interaction?.options?._subcommand !== 'private') { return }
+        const hoistedOptions = interaction.options._hoistedOptions[0];
+        await interaction.deferReply();
+
+        if (hoistedOptions?.name === 'connect') {
+          await connect(interaction, hoistedOptions)
+        } else if (hoistedOptions?.name === 'message') {
+          await message(interaction, hoistedOptions)
+        } else if (hoistedOptions?.name === 'image') {
+          await image(interaction, hoistedOptions)
+        } else {
+          await opcao(interaction, hoistedOptions);
+        }
+      }
   }
 }
 
@@ -43,42 +60,27 @@ async function messageCreate(message) {
   if (message.author.bot) { return }
 
   switch (message.channel.type) {
-    // DM
-    case 1: {
-      switch (message.type) {
-        case 0: // Default
-        case 19: // Reply
-          if (await inicial(message, await dadosSQL(message))) { ; } // empty
-          else { await private(message, await dadosSQL(message)) }
-      }
-    } return;
+    case 1:      // DM
+      if (!(message.type === 19 || message.type === 0)) { return } // Reply
+      if (await inicial(message, await dadosSQL(message))) { ; } // empty
+      else { await private(message, await dadosSQL(message)) }
 
-    // GUILDPUBLICTHREAD
-    case 11: {
-      switch (message.type) {
-        case 19:  // Reply
-          await reply(message, await dadosSQL(message));
-          await comando(message, await dadosSQL(message));
-      }
-    } return;
+      return;
+    case 11:    // GUILDPUBLICTHREAD
+      if (message.type !== 19) { return } // Reply
+      await reply(message, await dadosSQL(message));
+      await comando(message, await dadosSQL(message));
 
-    // GUILDTEXT
-    case 0: {
-      switch (message.type) {
-        case 19:  // Reply
-          await comando(message, await dadosSQL(message));
-      }
-    }
+      return;
+    case 0:    // GUILDTEXT
+      if (message.type !== 19) { return }  // Reply
+      await comando(message, await dadosSQL(message));
   }
 }
 
-async function predizerGuildAdd(guild) {
-  await predizerGuildAd(guild);
-}
 async function predizerGuildDelete(guild) {
   await _deleteGuild(guild.id);
 }
-
 async function guildMemberAdd(member) {
   await predizerManual({ user: member.id, guild: member.guild.id })
 }
@@ -107,6 +109,5 @@ module.exports = {
   messageCreate,
   guildMemberAdd,
   guildMemberRemove,
-  predizerGuildAdd,
   predizerGuildDelete
 }

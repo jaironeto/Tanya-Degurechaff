@@ -61,43 +61,50 @@ async function predizerManual({ user, guild }) {
 }
 
 async function predizer(client) {
-
   // ULTIMAS MENSAGENS ENVIADA  
-  const Channels = client.channels.cache;
-  for (let channel of Channels) {
-    if (!(channel[1]?.isTextBased())) { continue }
+  for (let guilds of client.guilds.cache) {
+    const guildSQL = await buscarGuild(guilds[1].id);
+    if (guildSQL === undefined) { continue };
 
-    const Messages = await channel[1]?.messages?.fetch([{ limit: 100000 }])
-    if (Messages.size === 0) { continue }
+    for (let channel of guilds[1].channels.cache) {
+      const guildId = channel[1]?.guildId;
+      const guildSQL = await buscarGuild(guildId);
+      if (guildSQL === undefined) { continue };
 
-    for (let message of Messages) {
-      if (message[0] === undefined || message?.size === 0) { continue }
-      if (message[1]?.author?.bot) { continue }
+      if (channel[1]?.guildId)
+        if (!(channel[1]?.isTextBased())) { continue }
 
-      const atualizar = await Predizer.findOrCreate({
-        where: {
-          user: message[1].author.id,
-          guild: message[1].guildId
-        },
-      });
+      const Messages = await channel[1]?.messages?.fetch([{ limit: 100000 }])
+      if (Messages.size === 0) { continue }
 
-      if (atualizar[0].dataValues.lastMsg === undefined ||
-        atualizar[0]?.dataValues?.lastMsg < message[1]?.createdTimestamp) {
+      for (let message of Messages) {
+        if (message[0] === undefined || message?.size === 0) { continue }
+        if (message[1]?.author?.bot) { continue }
 
-        await Predizer.update({ lastMsg: message[1]?.createdTimestamp }, {
+        const atualizar = await Predizer.findOrCreate({
           where: {
-            user: message[1]?.author?.id,
-            guild: message[1]?.guildId
-          }
+            user: message[1].author.id,
+            guild: message[1].guildId
+          },
         });
+
+        if (atualizar[0].dataValues.lastMsg === undefined ||
+          atualizar[0]?.dataValues?.lastMsg < message[1]?.createdTimestamp) {
+
+          await Predizer.update({ lastMsg: message[1]?.createdTimestamp }, {
+            where: {
+              user: message[1]?.author?.id,
+              guild: message[1]?.guildId
+            }
+          });
+        }
       }
     }
   }
 }
 
-async function predizerGuildAd(guild) {
-
-  const Members = await guild.members.fetch({ limit: 100000 })
+async function predizerInteraction(interaction) {
+  const Members = await interaction.guild.members.fetch({ limit: 500000 })
   if (Members.size === 0) { return }
   for (let member of Members) {
     if (member[0] === undefined) { continue }
@@ -198,5 +205,5 @@ module.exports = {
   predizerManual,
   _deletePredizer,
   predizer,
-  predizerGuildAd
+  predizerInteraction
 }

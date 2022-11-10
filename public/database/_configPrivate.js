@@ -1,15 +1,5 @@
-const { Sequelize, DataTypes, QueryTypes } = require('sequelize');
-
-const sequelize = new Sequelize('discord', 'root', 'senha', {
-  host: 'localhost',
-  dialect: 'mysql',
-  pool: {
-    max: 20,
-    min: 0,
-    acquire: 1200000,
-    idle: 10000
-  }
-});
+const { DataTypes, } = require('sequelize');
+const sequelize = require('./_config');
 
 const Guild = sequelize.define('guild', {
   guild: {
@@ -116,10 +106,6 @@ const Predizer = sequelize.define('predizer', {
 
 sequelize.sync()
   .then(() => '\ndatabase sincronizado\n')
-
-sequelize.authenticate()
-  .then(e => console.log('\nbanco de dados iniciado com sucesso!\n'))
-  .catch(e => console.log('\nocorreu um erro no banco de dados"\n'))
 
 module.exports = {
   Guild,

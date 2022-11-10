@@ -3,24 +3,6 @@ const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 
 const commands = [
-	new SlashCommandBuilder().setName('suporte').setDescription('inicia ou encerra um suporte prestado a um membro por dm')
-		.addStringOption((option) =>
-			option
-				.setName('opções')
-				.setDescription('deseja iniciar ou encerra um suporte por DM?')
-				.addChoices(
-					{ name: 'start', value: 'start' },
-					{ name: 'close', value: 'exit' },
-					{ name: 'listing', value: 'list' },
-					{ name: 'pending', value: 'pendente' }
-				)
-				.setRequired(true)
-		)
-		.addUserOption(option =>
-			option
-				.setName('member')
-				.setDescription('selecione um membro')
-		),
 	new SlashCommandBuilder().setName('config').setDescription('Configurações do bot, modulos ativos e desabilitar')
 		.addSubcommand((subcommand) =>
 			subcommand
@@ -59,18 +41,50 @@ const commands = [
 					option.setName('opcao4')
 						.setDescription('adicione uma opção de suporte')
 				)
-		)
+		).addSubcommand((subcommand) =>
+			subcommand
+				.setName('partner')
+				.setDescription("configurações funcionalidade partner")
+				.addStringOption((option) =>
+					option
+						.setName('connect')
+						.setDescription('deseja ativar/desativar essa função?')
+						.addChoices(
+							{ name: 'ativar', value: 'ativarPartner' },
+							{ name: 'desativar', value: 'desativarPartner' },
+						)
+				).addRoleOption(option =>
+					option.setName('cargo')
+						.setDescription('adicione um cargo ping pro bot mencionar a cada parceria realizada'),
+				).addIntegerOption(option =>
+					option.setName('intervalo')
+						.setDescription('adicione um intervalo de renovação de parceria entre 1 a 30 dias [por padrão e 7]'),
+				).addIntegerOption(option =>
+					option.setName('membros')
+						.setDescription('adicione um quantidade minima de membro aceitavel entre 5 e 100000 [por padrão e 5]'),
+				)
+		).addSubcommand((subcommand) =>
+		subcommand
+			.setName('disboard')
+			.setDescription("configurações funcionalidade partner")
+			.addStringOption((option) =>
+				option
+					.setName('desativar')
+					.setDescription('desativa o disboard')
+			).addRoleOption(option =>
+				option.setName('ativar')
+					.setDescription('ativa o disboard no canal atual e adicione um cargo ping pro bot mencionar a cada intervalo de bump'),
+			)
+	)
 
-	,
-	new SlashCommandBuilder().setName('bump').setDescription('Status de servidores parceiros'),
-	new SlashCommandBuilder().setName('partner').setDescription('Sistema de parceria'),
-]
-	.map(command => command.toJSON());
 
-const rest = new REST({ version: '9' }).setToken('ODIwNzUyMTk0MzI4MzMwMjYx.GVX52b.K6ohy3-PLRsitVuzWDD0xzgmOTeod9sKHiffbc');
+		
+].map(command => command.toJSON());
+
+const rest = new REST({ version: '9' }).setToken('token'); // alterar
 
 rest.put(
-	Routes.applicationCommands('820752194328330261'),
+	Routes.applicationCommands('820752194328330261'), // alterar
 	{ body: commands },
 )
 	.then(() => console.log('Successfully registered application commands.'))
