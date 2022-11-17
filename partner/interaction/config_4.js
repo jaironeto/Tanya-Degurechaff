@@ -3,8 +3,6 @@ const message = require('../messageCreate/message');
 
 module.exports = async function config_4(interaction) {
 
-  if (interaction?.options?._hoistedOptions[0]?.name !== 'membros') { return }
-
   const membros = interaction?.options?._hoistedOptions[0]?.value;
   if (membros > 100000 || membros < 1) {
     await message.editReply('value invalid');

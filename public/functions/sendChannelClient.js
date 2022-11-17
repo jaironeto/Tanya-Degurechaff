@@ -1,4 +1,4 @@
-const { Message, BaseInteraction } = require('discord.js')
+const { Base } = require('discord.js')
 const { Continued } = require('../error/continued');
 
 module.exports = async function sendChannelClient(discord, channelId, texto) {
@@ -10,10 +10,10 @@ module.exports = async function sendChannelClient(discord, channelId, texto) {
   // SE OS DADOS NAO BATER LANÇA UM ERRO
   // SE TUDO DER CERTO, ENVIA A MENSAGEM NO CANAL ESPECIFICADO OU FAZ UMA PESQUISA GERAL
   // ATE O CANAL ESPECIFICADO
-  if (!(discord instanceof Message || discord instanceof BaseInteraction)) { throw new Error('[1] error argumentos utility/send') }
-  if (typeof texto !== 'string') { throw new Error('[2] error argumentos utility/send') }
-  if (typeof channelId !== 'string') { throw new Error('[3] error argumentos utility/send') }
-  if (arguments.length !== 3) { throw new Error('[4] error argumentos utility/send') }
+  if (discord instanceof Base === false) { throw new Continued('error sintax estatico') }
+  if (typeof texto !== 'string') { throw new Continuednued('[2] error argumentos utility/send') }
+  if (typeof channelId !== 'string') { throw new Continuednued('[3] error argumentos utility/send') }
+  if (arguments.length !== 3) { throw new Continuednued('[4] error argumentos utility/send') }
 
   let canal;
   try {

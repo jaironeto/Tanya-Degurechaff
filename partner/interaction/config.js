@@ -2,8 +2,6 @@ const { partner, guildPartner, buscarGuild, _deleteGuild } = require('../../publ
 
 module.exports = async function config(interaction) {
 
-  if (interaction?.options?._hoistedOptions[0]?.name !== 'connect') { return }
-
   if (interaction?.options?._hoistedOptions[0]?.value === 'ativarPartner') {
     await interaction.editReply('Partners ativado nesse canal')
     await guildPartner({ _guildId: interaction.guildId, _channel: interaction.channelId })

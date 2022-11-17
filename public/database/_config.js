@@ -1,13 +1,13 @@
 const { Sequelize, DataTypes, QueryTypes } = require('sequelize');
 
-const sequelize = new Sequelize('discord', 'root', 'sua senha', {
+const sequelize = new Sequelize('discord', 'root', 'senha990', {
   host: 'localhost',
   dialect: 'mysql',
   pool: {
-    max: 20,
+    max: 1,
     min: 0,
     acquire: 1200000,
-    idle: 10000
+    idle: 1728000000
   }
 });
 

@@ -1,16 +1,15 @@
-const { Continued } = require('../../public/error/continued');
+const Continued = require('../../public/error/continued');
 const { Model } = require('sequelize');
 const { Disboard } = require('./_configDisboard');
 
 // FUNÇÃO GUILD
 async function disboard({ _guildId, _channel, role, verifyBusca }, verifyUpdate) {
-  if (!(verifyUpdate === undefined || verifyUpdate instanceof Model)) { throw new Error('sintax error') }
-
+  if (!(verifyUpdate === undefined || verifyUpdate instanceof Model)) { throw new Continued('sintax error') }
   var check;
   if (verifyUpdate) { check = verifyUpdate }
   else { check = await Disboard.findByPk(_guildId) }
 
-  if (check !== null) {
+  if (!!check) {
     if (_channel !== undefined) { check.update({ channel: _channel }) }
     if (role !== undefined) { check.update({ role: role }) }
   }

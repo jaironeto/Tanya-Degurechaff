@@ -3,8 +3,6 @@ const message = require('../messageCreate/message');
 
 module.exports = async function config_3(interaction) {
 
-  if (interaction?.options?._hoistedOptions[0]?.name !== 'intervalo') { return }
-
   const intervalo = interaction?.options?._hoistedOptions[0]?.value;
   if (intervalo > 30 || intervalo < 1) {
     await message.editReply('value invalid');

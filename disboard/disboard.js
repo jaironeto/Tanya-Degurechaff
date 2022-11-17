@@ -22,7 +22,7 @@ async function messageCreate(message) {
         const timer = new Date(dadosSQL.timer) - new Date();
 
         if (timer < 0) {
-          await message.client.channels.cache.get(dadosSQL?.channel?.id)
+          await message.client.channels.cache?.get(dadosSQL?.channel?.id)
             .send(`Disboard pronto para \`\\bump\` <@&${dadosSQL?.role}>`)
         } else {
           timeoutId._repeat = timer;
@@ -35,20 +35,22 @@ async function messageCreate(message) {
   }
 }
 
-async function interaction(interaction) {
-  if (interaction.user.bot) { return } // BOT
-  if (!(interaction.channel.type === 0 || interaction.channel.type === 5)) { return } // GUILDCHANNEL AND PALCO
-  if (interaction.type !== 2) { return } // COMANDODEBARRA  
-  if (interaction?.options?._hoistedOptions[0]?.name === undefined) { return }
-  if (interaction?.options?._subcommand !== 'disboard') { return }
+async function Interaction(interaction, userId) {
+  if (interaction.replied) { return userId }
+  else if (interaction.isRepliable() === false) { return userId }
+  else if (interaction.user.bot) { return userId } // BOT
+  else if (!(interaction.channel.type === 0 || interaction.channel.type === 5)) { return userId } // GUILDCHANNEL AND PALCO
+  else if (interaction.type !== 2) { return userId} // COMANDODEBARRA  
+  else if (interaction?.options?._hoistedOptions[0]?.name === undefined) { return userId }  
+  else if (interaction?.options?._subcommand !== 'disboard') { return userId}
+  
   const hoistedOptionsName = interaction?.options?._hoistedOptions[0]?.name;
 
-  await interaction.deferReply();
   if (hoistedOptionsName === 'ativar') { await config_1(interaction) }
   else { await config(interaction) }
 }
 
 module.exports = {
   messageCreate,
-  interaction
+  Interaction
 }

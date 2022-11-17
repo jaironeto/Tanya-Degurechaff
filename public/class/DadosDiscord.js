@@ -1,4 +1,5 @@
-const { Message, BaseInteraction } = require('discord.js')
+const { Message, BaseInteraction } = require('discord.js');
+const Continued = require('../error/continued');
 
 module.exports = class DadosDiscord {
 
@@ -9,7 +10,7 @@ module.exports = class DadosDiscord {
   #username;
 
   constructor(discord) {
-    if (!(discord instanceof Message || discord instanceof BaseInteraction)) { throw new Error('[1] error argumentos utility/send') }
+    if (!(discord instanceof Message || discord instanceof BaseInteraction)) { throw new Continued('[1] Continued argumentos utility/send') }
 
     this.#userId = discord?.author?.id ?? discord?.user?.id;
     this.#channelId = discord?.channelId;
@@ -18,26 +19,26 @@ module.exports = class DadosDiscord {
 
     const username = discord?.author?.username ?? discord?.user?.username
     const discriminator = discord?.author?.discriminator ?? discord?.user?.discriminator
-    if (username === undefined || discriminator === undefined) { throw new Error('error sintaxy constructor [1]') }
+    if (username === undefined || discriminator === undefined) { throw new Continued('Continued sintaxy constructor [1]') }
 
     this.#username = username.toString() + '#' + discriminator.toString();
 
-    if (this.#userId === undefined) { throw new Error('error sintaxy constructor [2]') }
-    if (this.#channelId === undefined) { throw new Error('error sintaxy constructor [3]') }
-    if (this.#guildId === undefined) { throw new Error('error sintaxy constructor [4]') }
-    if (this.#discord === undefined) { throw new Error('error sintaxy constructor [5]') }
+    if (this.#userId === undefined) { throw new Continued('Continued sintaxy constructor [2]') }
+    if (this.#channelId === undefined) { throw new Continued('Continued sintaxy constructor [3]') }
+    if (this.#guildId === undefined) { throw new Continued('Continued sintaxy constructor [4]') }
+    if (this.#discord === undefined) { throw new Continued('Continued sintaxy constructor [5]') }
   }
 
   // FUNÇÕES DE BUSCA RESUMIDA DOS DADOS APARTIR DO OBJETO CORRENTE
-  // COMO E ALGO IMPORTANTE, DEVE RETORNAR O DADO OU UM ERROR
+  // COMO E ALGO IMPORTANTE, DEVE RETORNAR O DADO OU UM Continued
   get userId() { return this.#userId }
   get channelId() { return this.#channelId }
   get guildId() { return this.#guildId }
   get username() { return this.#username }
 
   // BUSCA MAIS GERAL DOS DADOS, ENQUANTO USA UMA FUNÇÃO PRIVADA NOS BASTIDORES
-  // PARA ABSTRAIR AS OPÇÕES EM APENAS UM LUGAR PARA EVITAR ERRORS ACIDENTAIS
-  // COMO E ALGO IMPORTANTE, DEVE RETORNAR O DADO OU UM ERROR
+  // PARA ABSTRAIR AS OPÇÕES EM APENAS UM LUGAR PARA EVITAR ContinuedS ACIDENTAIS
+  // COMO E ALGO IMPORTANTE, DEVE RETORNAR O DADO OU UM Continued
   async clientUserId(user) {
     return (await this.#pVerifyClient('users', user)).id
   }
@@ -59,13 +60,13 @@ module.exports = class DadosDiscord {
 
 
   async #pVerifyClient(opcao, id) {
-    if (typeof id !== 'string') { throw new Error('error sitnax dadosAPI [6]') }
-    if (!(opcao !== 'channels' || opcao !== 'guilds' || opcao !== 'users')) { throw new Error('error sitnax dadosAPI [7]') }
+    if (typeof id !== 'string') { throw new Continued('Continued sitnax dadosAPI [6]') }
+    if (!(opcao !== 'channels' || opcao !== 'guilds' || opcao !== 'users')) { throw new Continued('Continued sitnax dadosAPI [7]') }
 
     var dados = undefined;
     try {
       dados = await this.#discord.client[opcao]?.fetch(id);
-    } catch (e) { throw new Error('error sitnax dadosAPI [8]') }
+    } catch (e) { throw new Continued('Continued sitnax dadosAPI [8]') }
 
     return dados;
   }

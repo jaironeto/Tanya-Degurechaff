@@ -1,26 +1,28 @@
-const SecurityPrivate = require('../private/security/SecurityPrivate');
+const Continued = require('../../public/error/continued');
+const userPrivate = require('../data/userPrivate');
+const _deleteUserPrivate = require('../data/_deleteUserPrivate');
+const SecurityPrivate = require('../security/SecurityPrivate');
 
-module.exports = async function private(Message, dadosSQL) {
+module.exports = async function private(message, userSQL) {
 
-  // VERIFICA SE A MENSAGEM E DE UM BOT, E SE E ENVIADO NO PRIVADO
-  // VERIFICA A CONFIGURAÇÃO REPLY DO DATABASE E SE TEM USER
-  // SE CERTIFICA QUE A MENSAGEM TEM STATUS 'ATIVO'
-
-  // PEGA O ID DO CARGO MENCIONADO NA REPLY, CRIA UMA DM COM ESSE ID, PESQUISA
-  // A MENSAGEM DO SUPORTE PRA USAR COMO REPLY E ENTAO ENVIA A MENSAGEM
   try {
-    const User = dadosSQL.user;
-    await SecurityPrivate(Message, dadosSQL);
+    if (userSQL?.get('status') !== 'ativo') { return }
 
-    const message = await (await (await Message.client.guilds.fetch(User.guild))
-      .channels.fetch(User.replyGuildChannel))
-      .messages.fetch(User.replyGuildMessage);
-    await message.reply(Message.content); // reply
+    try {
+      await userSQL.get('replyGuildJSON').reply(message.content);
+    } catch (e) {
+      console.log(userSQL.get('replyGuildJSON').channelId);
+      const alvo = await message.client.channels.fetch(userSQL.get('replyGuildJSON').channelId);
+      const msg = await alvo.send(`<@${message.author.id}>\n${message.content.slice(0, 1800)}`);
+
+      await userPrivate({
+        status: 'ativo', replyGuildJSON: msg, user: message.author.id,
+      }, userSQL);
+    }
 
   } catch (e) {
-    if (e?.name === 'continued') { ; /*console.error(`\n\n\n\nERROR DE DESENVOLVIMENTO\n${e?.stack}\n\n\n\n`)*/ }
-    else throw e
+    await message.channel.send('ocorreu um erro no envio da mensagem, portanto esse suporte sera encerrado');
+    await _deleteUserPrivate(message.author.id);
+    throw e;
   }
 }
-
-// PAREI AQUI

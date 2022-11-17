@@ -1,5 +1,5 @@
 const { Message, ButtonInteraction, BaseInteraction, GuildChannel, DMChannel } = require('discord.js');
-const { Continued } = require('../error/continued')
+const Continued = require('../error/continued')
 
 function notString(...opcoes) {
   _verifyArgumentsIntern(opcoes)
@@ -18,14 +18,14 @@ function isUndefined(...opcoes) {
 function isTrue(...opcoes) {
   _verifyArgumentsIntern(opcoes)
   for (let index of opcoes) {
-    if (index === true) { throw new Continued() }
+    if (!!index === true) { throw new Continued() }
   }
 }
 
 function isFalse(...opcoes) {
   _verifyArgumentsIntern(opcoes)
   for (let index of opcoes) {
-    if (index === false) { throw new Continued() }
+    if (!!index === false) { throw new Continued() }
   }
 }
 
@@ -33,7 +33,7 @@ function isBot(...opcoes) {
   _verifyArgumentsIntern(opcoes)
   for (let index of opcoes) {
     const user = index?.user ?? index?.author;
-    if (user === undefined) { throw new Error('error sintax isBot') }
+    if (user === undefined) { throw new Continued('error sintax isBot') }
     if (user.bot) { throw new Continued() }
   }
 }

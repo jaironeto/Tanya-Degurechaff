@@ -1,16 +1,16 @@
 const { GuildPartner, Partner } = require('./_configPartner')
-const { Continued } = require('../error/continued')
+const Continued = require('../error/continued')
 const { Model } = require('sequelize');
 
 // FUNÇÃO GUILD
 async function guildPartner({ _guildId, _channel, membros, intervalo, role, guildIdBlock, auto, tag1, tag2 }, verifyUpdate) {
-  if (!(verifyUpdate === undefined || verifyUpdate instanceof Model)) { throw new Error('sintax error') }
+  if (!(verifyUpdate === undefined || verifyUpdate instanceof Model)) { throw new Continued('sintax error') }
 
   var check;
   if (verifyUpdate) { check = verifyUpdate }
   else { check = await GuildPartner.findByPk(_guildId) }
 
-  if (check !== null) {
+  if (!!check) {
     if (guildIdBlock !== undefined) { check.update({ guildIdBlock: guildIdBlock }) }
     if (_channel !== undefined) { check.update({ channel: _channel }) }
     if (auto !== undefined) { check.update({ auto: auto }) }
